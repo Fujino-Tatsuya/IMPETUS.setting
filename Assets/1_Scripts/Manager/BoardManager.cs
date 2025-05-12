@@ -6,7 +6,10 @@ public class BoardManager : MonoBehaviour
 {
 
 
-public static BoardManager instance;
+    public static BoardManager instance;
+    public static TestSpawner testSpawner;
+    public bool IsInitialized => grid != null;
+
 
     private void Awake() // 씬넘겨도 유일성이 보존되는거지
         // 보드 매니저는 
@@ -20,6 +23,7 @@ public static BoardManager instance;
         {
             Destroy(instance);
         }
+        GenerateBoard();
     }
 
     public GameObject nodePrefab;
@@ -28,9 +32,13 @@ public static BoardManager instance;
 
     private Node[,] grid;
 
+    public int Width => width; // 값 내보내기
+    public int Height => height;
+
     void Start()
     {
-        GenerateBoard();
+        //GenerateBoard();
+        //testSpawner.SpawnRandomObstacle(3);
     }
 
     void GenerateBoard()
@@ -56,5 +64,11 @@ public static BoardManager instance;
     public Node GetNode(Vector2Int pos)
     {
         return grid[pos.x, pos.y];
+    }
+
+    public bool IsBlocked(Vector2Int pos) // 이동 가능 여부 체크 
+    {
+        Node node = GetNode(pos);
+        return node == null || node.IsOccupied();
     }
 }
