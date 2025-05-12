@@ -20,9 +20,15 @@ public class Node : MonoBehaviour
     [SerializeField] private Material grayMat;
     [SerializeField] private Material nullMat;
 
+    [Header("상태")]
+    public GameObject currentPiece;   // 올라간 기물
+    public bool isObstacle = false;   // 장애물 여부
+
     public void Init(Vector2Int pos, NodeColorType color)
     {
         GridPos = pos;
+        currentPiece = null;
+        isObstacle = false;
         SetColor(color);
     }
 
@@ -42,5 +48,9 @@ public class Node : MonoBehaviour
                 meshRenderer.material = nullMat;
                 break;
         }
+    }
+    public bool IsOccupied() // 이미 기물이 있거나 장애물이 있으면 true
+    {
+        return currentPiece != null || isObstacle;
     }
 }
