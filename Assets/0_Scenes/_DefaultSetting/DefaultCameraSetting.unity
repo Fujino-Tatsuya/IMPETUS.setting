@@ -208,13 +208,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.26950803, y: -0.00067225064, z: 0.00018813847, w: 0.96299785}
-  m_LocalPosition: {x: 0, y: 5, z: -9}
+  m_LocalRotation: {x: 0.34202, y: -0.0007379793, z: 0.00026860245, w: 0.9396924}
+  m_LocalPosition: {x: 0, y: 5.8, z: -8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 31.27, y: -0.08, z: 0}
+  m_LocalEulerAnglesHint: {x: 40, y: -0.09, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,7 +504,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardManager: {fileID: 1376734053}
-  obstaclePrefab: {fileID: 7796244498960133743, guid: a5a11d84dc895b34eb91e92a22ab0060,
+  obstaclePrefab: {fileID: 1672693264174133374, guid: 5fcffb1689c53334abb9cd08a439ebb1,
     type: 3}
   obstacleCount: 4
 --- !u!4 &1460012449
