@@ -66,17 +66,17 @@ public class BoardManager : MonoBehaviour
         return grid[pos.x, pos.y];
     }
 
-<<<<<<< HEAD
-    public bool IsAble(int x, int z)
-    {
-        if (grid[x,z].piece)
-            return false;
-        return true;
-=======
+//<<<<<<< HEAD
+//    public bool IsAble(int x, int z)
+//    {
+//        if (grid[x,z].piece)
+//            return false;
+//        return true;
+//=======
     public bool IsBlocked(Vector2Int pos) // 이동 가능 여부 체크 
     {
         Node node = GetNode(pos);
         return node == null || node.IsOccupied();
->>>>>>> origin/main
+
     }
 }

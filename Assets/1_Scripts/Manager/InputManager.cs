@@ -85,14 +85,14 @@ public class InputManager : MonoBehaviour
         RaycastHit[] hits = Physics.RaycastAll(ray);
 
         int x = -1, y = -1;
-
+        Node lastNode = null;
         foreach (RaycastHit hit in hits)
         {
             if (hit.collider.tag == "Node")
             {
                 Node node = hit.collider.GetComponent<Node>();
 
-                if (!BoardManager.instance.IsAble(node.GridPos.x, node.GridPos.y))
+                if (BoardManager.instance.IsBlocked(node.GridPos))
                     continue;
                 if (x != -1 && y != -1)
                 {
@@ -103,11 +103,13 @@ public class InputManager : MonoBehaviour
                 }
                 x = node.GridPos.x;
                 y = node.GridPos.y;
+                lastNode = node;
                 piece.x = x;
                 piece.y = y;
             }
         }
-
+        if(lastNode != null)
+            lastNode.currentPiece = piece.gameObject;
         piece.RePosition();
         piece = null;
 
