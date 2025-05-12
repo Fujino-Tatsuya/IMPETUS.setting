@@ -1,7 +1,27 @@
 using UnityEngine;
 
+
+
 public class BoardManager : MonoBehaviour
 {
+
+
+public static BoardManager instance;
+
+    private void Awake() // 씬넘겨도 유일성이 보존되는거지
+        // 보드 매니저는 
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(instance);
+        }
+        else
+        {
+            Destroy(instance);
+        }
+    }
+
     public GameObject nodePrefab;
     public int width = 7;
     public int height = 7;
