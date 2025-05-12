@@ -10,8 +10,6 @@ public enum NodeColorType
 }
 public class Node : MonoBehaviour
 {
-    public Piece piece;
-
     public Vector2Int GridPos { get; private set; }
     public NodeColorType ColorType { get; private set; }
 
@@ -21,7 +19,7 @@ public class Node : MonoBehaviour
     [SerializeField] private Material nullMat;
 
     [Header("상태")]
-    public GameObject currentPiece;   // 올라간 기물
+    public GameObject currentPiece = null;   // 올라간 기물
     public bool isObstacle = false;   // 장애물 여부
 
     public void Init(Vector2Int pos, NodeColorType color)
