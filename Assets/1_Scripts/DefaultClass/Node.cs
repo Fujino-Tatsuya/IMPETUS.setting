@@ -10,6 +10,8 @@ public enum NodeColorType
 }
 public class Node : MonoBehaviour
 {
+    public Piece piece;
+
     public Vector2Int GridPos { get; private set; }
     public NodeColorType ColorType { get; private set; }
 

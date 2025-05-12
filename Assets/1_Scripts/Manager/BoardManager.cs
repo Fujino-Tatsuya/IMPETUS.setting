@@ -57,4 +57,11 @@ public static BoardManager instance;
     {
         return grid[pos.x, pos.y];
     }
+
+    public bool IsAble(int x, int z)
+    {
+        if (grid[x,z].piece)
+            return false;
+        return true;
+    }
 }

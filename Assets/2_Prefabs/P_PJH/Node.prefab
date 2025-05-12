@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7680025654416977135}
   m_Layer: 0
   m_Name: Node
-  m_TagString: Untagged
+  m_TagString: Node
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -118,6 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48e723544cce8e94d90ee94857ff8142, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  piece: {fileID: 0}
   meshRenderer: {fileID: 5982154633867107620}
   whiteMat: {fileID: 2100000, guid: 4f3e07c7b502f7d42bb07a39738625ed, type: 2}
   grayMat: {fileID: 2100000, guid: 2767c1846b809f848bf81e054fe338d8, type: 2}
