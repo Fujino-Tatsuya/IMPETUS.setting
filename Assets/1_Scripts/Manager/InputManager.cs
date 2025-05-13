@@ -169,6 +169,8 @@ public class InputManager : MonoBehaviour
                 Vector3 groundPoint = ray.origin + ray.direction * t;
                 piece.gameObject.transform.position = new Vector3(groundPoint.x, 0, groundPoint.z);
             }
+            else
+                piece.gameObject.transform.position = new Vector3(0, 0, -100);
         }
     }
 

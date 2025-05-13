@@ -13,7 +13,7 @@ public class Piece : Stat
 
     public Node node = null;
 
-    int level = 1; //0에서부터 아님 1에서 부터?
+    public int level = 1; //0에서부터 아님 1에서 부터?
     [SerializeField] private int moveRadius = 10; //아직은 제한이 없을려나
 
     public void SetPosition(int x, int y)
