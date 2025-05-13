@@ -25,17 +25,20 @@ public class Node : MonoBehaviour
     public NodeColorType ColorType { get; private set; }
 
     [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] MeshRenderer frontRenderer;  
+
     [Header("상태")]
     public GameObject currentPiece;
     public bool isObstacle;
 
-    public void Init(Vector2Int pos, NodeColorType color, Material mat)
+    public void Init(Vector2Int pos, NodeColorType color, Material mat, Material frontMat)
     {
         GridPos = pos;
         ColorType = color;
         currentPiece = null;
         isObstacle = false;
         meshRenderer.material = mat;   // 전달받은 머티리얼 적용
+        frontRenderer.material = frontMat;  // 정면 고정
     }
 
     public bool IsOccupied() => currentPiece != null || isObstacle;

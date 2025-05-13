@@ -20,6 +20,11 @@ public class BoardManager : MonoBehaviour
     [Tooltip("회색 계열 5개")]
     [SerializeField] private Material[] grayMats = new Material[5];
 
+    [Header("Front-Tile (고정)")]
+    [SerializeField] Material frontWhiteMat;
+    [SerializeField] Material frontBlackMat;   // 회색 노드용
+
+
     private void Awake() // 씬넘겨도 유일성이 보존되는거지
         // 보드 매니저는 
     {
@@ -61,14 +66,19 @@ public class BoardManager : MonoBehaviour
                 Node node = Instantiate(nodePrefab, world, Quaternion.identity, transform)
                                 .GetComponent<Node>();
 
+
                 bool isWhite = (x + y) % 2 == 0;
                 Material mat = isWhite
                     ? whiteMats[Random.Range(0, whiteMats.Length)]
                     : grayMats[Random.Range(0, grayMats.Length)];
 
+                Material frontmat = isWhite
+                    ? frontWhiteMat
+                    : frontBlackMat;
+
                 node.Init(new Vector2Int(x, y),
                           isWhite ? NodeColorType.White : NodeColorType.Gray,
-                          mat);
+                          mat, frontmat);
 
                 grid[x, y] = node;
             }
