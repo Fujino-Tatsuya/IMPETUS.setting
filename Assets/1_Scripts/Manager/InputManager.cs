@@ -21,14 +21,16 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private Piece piece;
+    public Piece piece;
+    public bool isPlace = false;
 
     // Update is called once per frame
     void Update()
     {
         if(Input.GetMouseButtonDown(0))
         {
-            MouseRay();
+            if(!isPlace)
+                MouseRay();
         }
         if(Input.GetMouseButton(0))
         {
@@ -36,7 +38,10 @@ public class InputManager : MonoBehaviour
         }
         if (Input.GetMouseButtonUp(0))
         {
-            Move();
+            if (isPlace)
+                Place();
+            else
+                Move();
         }
     }
 
@@ -165,5 +170,78 @@ public class InputManager : MonoBehaviour
                 piece.gameObject.transform.position = new Vector3(groundPoint.x, 0, groundPoint.z);
             }
         }
+    }
+
+    void Place()
+    {
+        if (piece == null) return;
+
+        isPlace = false;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit[] hits = Physics.RaycastAll(ray);
+
+        int x = -1, y = -1;
+        Node lastNode = null;
+        bool blocked = false;
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (!hit.collider.CompareTag("Node")) continue;
+
+            Node node = hit.collider.GetComponent<Node>();
+
+            /* 기존 필터 로직 --------------------------------------------------- */
+            if (x != -1 && y != -1)
+            {
+                if (node.GridPos.y > y) continue;
+                if ((node.GridPos.x <= 3 && x > node.GridPos.x) ||
+                    (node.GridPos.x >= 3 && x < node.GridPos.x))
+                    continue;
+            }
+
+            /* 장애물 / 아군 차단 ---------------------------------------------- */
+            if (BoardManager.instance.IsBlocked(node.GridPos))
+            {
+                blocked = true;
+                x = node.GridPos.x;
+                y = node.GridPos.y;
+                continue; // 막혔으면 더 진행 안 함
+            }
+
+            /* 빈 칸 발견 => 후보로 저장 (하지만 아직 piece 좌표는 건드리지 않음) */
+            blocked = false;
+            x = node.GridPos.x;
+            y = node.GridPos.y;
+            lastNode = node;
+        }
+
+        /* ---------------------------------------------------------------------- */
+        /* 이동 가능성 최종 확인 + 좌표/노드 교체                                */
+        /* ---------------------------------------------------------------------- */
+        if (lastNode != null && !blocked)
+        {
+            /* 노드 링크 교체 */
+            if (piece.node != null)
+                piece.node.currentPiece = null;
+
+            lastNode.currentPiece = piece.gameObject;
+            piece.node = lastNode;
+
+            /* 이때 좌표를 확정적으로 갱신 */
+            piece.x = lastNode.GridPos.x;
+            piece.y = lastNode.GridPos.y;
+        }
+        else
+        {
+            Destroy(piece.gameObject);
+        }
+
+        /* 스냅 또는 원복 */
+        piece.RePosition();
+        piece = null;
+
+        Debug.Log($"last = ({x},{y})");
+        Debug.DrawRay(ray.origin, ray.direction, Color.red);
     }
 }
