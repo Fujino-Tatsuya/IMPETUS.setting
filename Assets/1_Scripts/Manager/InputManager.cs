@@ -86,14 +86,13 @@ public class InputManager : MonoBehaviour
 
         int x = -1, y = -1;
         Node lastNode = null;
+        bool blocked = false;
         foreach (RaycastHit hit in hits)
         {
             if (hit.collider.tag == "Node")
             {
                 Node node = hit.collider.GetComponent<Node>();
 
-                if (BoardManager.instance.IsBlocked(node.GridPos))
-                    continue;
                 if (x != -1 && y != -1)
                 {
                     if (node.GridPos.y > y)
@@ -101,15 +100,36 @@ public class InputManager : MonoBehaviour
                     if ((node.GridPos.x <= 3 && x > node.GridPos.x) || (node.GridPos.x >= 3 && x < node.GridPos.x))
                         continue;
                 }
+                if (BoardManager.instance.IsBlocked(node.GridPos))
+                {
+                    blocked = true;
+                    x = node.GridPos.x;
+                    y = node.GridPos.y;
+                    continue;
+                }
+                else
+                {
+                    blocked = false;
+                }
                 x = node.GridPos.x;
                 y = node.GridPos.y;
                 lastNode = node;
                 piece.x = x;
                 piece.y = y;
+
             }
         }
-        if(lastNode != null)
-            lastNode.currentPiece = piece.gameObject;
+        if (lastNode != null)
+        {
+            if (!blocked)
+            {
+                lastNode.currentPiece = piece.gameObject;
+                if (piece.node)
+                    piece.node.currentPiece = null;
+                piece.node = lastNode;
+            }
+        }
+
         piece.RePosition();
         piece = null;
 

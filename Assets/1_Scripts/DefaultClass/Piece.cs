@@ -9,6 +9,8 @@ public abstract class Piece : Stat
     public int x;
     public int y;
 
+    public Node node = null;
+
     int level = 1; //0에서부터 아님 1에서 부터?
     [SerializeField] private int moveRadius = 10; //아직은 제한이 없을려나
 

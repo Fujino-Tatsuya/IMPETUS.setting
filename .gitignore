@@ -76,5 +76,13 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+<<<<<<< HEAD
 # End of https://www.toptal.com/developers/gitignore/api/unity
 Assets/TextMesh Pro.meta
+=======
+# Ignore TextMeshPro auto-generated files
+/[Aa]ssets/TextMesh Pro/
+
+
+# End of https://www.toptal.com/developers/gitignore/api/unity
+>>>>>>> origin/main
