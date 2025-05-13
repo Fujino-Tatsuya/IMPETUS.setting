@@ -883,6 +883,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 35d34d79fe90d21488e11f3d5cfc1f80, type: 2}
   - {fileID: 2100000, guid: df08e52b9dfce7a4ebcae6e48908ece1, type: 2}
   - {fileID: 2100000, guid: bb56ffb79ff6c894997062688b96c0f3, type: 2}
+  frontWhiteMat: {fileID: 2100000, guid: 1ac974b70f7c33e4fb8989b58b0b1e05, type: 2}
+  frontBlackMat: {fileID: 2100000, guid: 8219be4a06cfaf0419947ea9396465b6, type: 2}
   width: 7
   height: 7
 --- !u!4 &725064195
