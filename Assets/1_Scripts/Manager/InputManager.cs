@@ -78,8 +78,7 @@ public class InputManager : MonoBehaviour
 
     void Move()
     {
-        if (piece == null)
-            return;
+        if (piece == null) return;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit[] hits = Physics.RaycastAll(ray);
@@ -87,55 +86,69 @@ public class InputManager : MonoBehaviour
         int x = -1, y = -1;
         Node lastNode = null;
         bool blocked = false;
+
         foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.tag == "Node")
-            {
-                Node node = hit.collider.GetComponent<Node>();
+            if (!hit.collider.CompareTag("Node")) continue;
 
-                if (x != -1 && y != -1)
-                {
-                    if (node.GridPos.y > y)
-                        continue;
-                    if ((node.GridPos.x <= 3 && x > node.GridPos.x) || (node.GridPos.x >= 3 && x < node.GridPos.x))
-                        continue;
-                }
-                if (BoardManager.instance.IsBlocked(node.GridPos))
-                {
-                    blocked = true;
-                    x = node.GridPos.x;
-                    y = node.GridPos.y;
+            Node node = hit.collider.GetComponent<Node>();
+
+            /* 기존 필터 로직 --------------------------------------------------- */
+            if (x != -1 && y != -1)
+            {
+                if (node.GridPos.y > y) continue;
+                if ((node.GridPos.x <= 3 && x > node.GridPos.x) ||
+                    (node.GridPos.x >= 3 && x < node.GridPos.x))
                     continue;
-                }
-                else
-                {
-                    blocked = false;
-                }
+            }
+
+            /* 장애물 / 아군 차단 ---------------------------------------------- */
+            if (BoardManager.instance.IsBlocked(node.GridPos))
+            {
+                blocked = true;
                 x = node.GridPos.x;
                 y = node.GridPos.y;
-                lastNode = node;
-                piece.x = x;
-                piece.y = y;
-
+                continue; // 막혔으면 더 진행 안 함
             }
+
+            /* 빈 칸 발견 => 후보로 저장 (하지만 아직 piece 좌표는 건드리지 않음) */
+            blocked = false;
+            x = node.GridPos.x;
+            y = node.GridPos.y;
+            lastNode = node;
         }
-        if (lastNode != null)
+
+        /* ---------------------------------------------------------------------- */
+        /* 이동 가능성 최종 확인 + 좌표/노드 교체                                */
+        /* ---------------------------------------------------------------------- */
+        if (lastNode != null && !blocked)
         {
-            if (!blocked)
+            var moves = MovementManager.instance.GetMoves(piece);
+            if (moves.Contains(lastNode))          // 합법 이동
             {
-                lastNode.currentPiece = piece.gameObject;
-                if (piece.node)
+                /* 노드 링크 교체 */
+                if (piece.node != null)
                     piece.node.currentPiece = null;
+
+                lastNode.currentPiece = piece.gameObject;
                 piece.node = lastNode;
+
+                /* 이때 좌표를 확정적으로 갱신 */
+                piece.x = lastNode.GridPos.x;
+                piece.y = lastNode.GridPos.y;
+
+                MovementManager.instance.InvalidateAll();  
             }
         }
 
+        /* 스냅 또는 원복 */
         piece.RePosition();
         piece = null;
 
-        Debug.Log(x.ToString() + ' ' + y.ToString());
+        Debug.Log($"last = ({x},{y})");
         Debug.DrawRay(ray.origin, ray.direction, Color.red);
     }
+
 
     void PreView()
     {

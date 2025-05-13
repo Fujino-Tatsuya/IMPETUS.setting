@@ -4,10 +4,5 @@ using UnityEngine;
 
 public class Rook : Piece
 {
-    public override bool IsMoveable()
-    {
-        //if (BoardManager.instance.grid[x, y].IsAble())
-            //return true;
-        return false;
-    }
+
 }

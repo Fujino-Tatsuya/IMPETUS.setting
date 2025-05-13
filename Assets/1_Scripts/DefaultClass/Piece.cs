@@ -35,6 +35,6 @@ public abstract class Piece : Stat
         transform.position = new Vector3(x - 3, 0, y - 5);
     }
 
-    public abstract bool IsMoveable();
+
 }
 
