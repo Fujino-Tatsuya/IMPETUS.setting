@@ -11,15 +11,12 @@ public class CardManager : MonoBehaviour
 {
     public static CardManager instance;
     public GameObject cardPrefab;
-<<<<<<< Updated upstream
 
     public GameObject Deck;
     public GameObject Hand;
     public GameObject Grave;
 
 
-=======
->>>>>>> Stashed changes
     private void Awake()
     {
         if (instance == null)
@@ -42,7 +39,6 @@ public class CardManager : MonoBehaviour
 
     }
 
-<<<<<<< Updated upstream
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Space))
@@ -56,18 +52,13 @@ public class CardManager : MonoBehaviour
     }
 
 
-=======
->>>>>>> Stashed changes
     void M_InitDeck(int InitCard)
     {
         int m_CardCount = InitCard;
         for (int i = 0; i < m_CardCount; i++)
         {
-<<<<<<< Updated upstream
             GameObject gameObject = Instantiate(cardPrefab, Deck.transform);
             Card card = gameObject.GetComponent<Card>();
-=======
->>>>>>> Stashed changes
             card.m_CardIndex = i;
             m_deck.Add(gameObject);
         }
@@ -86,14 +77,11 @@ public class CardManager : MonoBehaviour
     }
     public void Shuffle()
     {
-<<<<<<< Updated upstream
         int i = 0;
         foreach (GameObject gameObject in m_grave)
         {
             m_deck.Add(gameObject);
             m_grave[i++].transform.position = Deck.transform.position;
-=======
->>>>>>> Stashed changes
         }
         m_grave.Clear();
 
@@ -128,10 +116,9 @@ public class CardManager : MonoBehaviour
 
     public void Discard()
     {
-<<<<<<< Updated upstream
+
         foreach (GameObject card in m_hand)
-=======
->>>>>>> Stashed changes
+
         {
             card.transform.position = Grave.transform.position;
             m_grave.Add(card);
@@ -147,9 +134,9 @@ public class CardManager : MonoBehaviour
         m_hand.Remove(card);
         m_grave.Add(card);
     }
-<<<<<<< Updated upstream
+
 }
-=======
+
 
     //정렬 - 사용이나 드로우 시
     //public List<Transform> cards = new List<Transform>();
@@ -195,5 +182,4 @@ public class CardManager : MonoBehaviour
     //나가면 내리기
     //들고 드래그 시 사용
     //위에 오버 시 확대 카드 중심 - 마우스 위치
-}
->>>>>>> Stashed changes
+//}

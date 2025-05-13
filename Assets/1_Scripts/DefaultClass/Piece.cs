@@ -1,8 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum PieceVariant { Phone, Rook, Knight, Bishop, Queen, King }
 
-public abstract class Piece : Stat
+public class Piece : Stat
 {
     public PieceVariant pieceVariant;
 
