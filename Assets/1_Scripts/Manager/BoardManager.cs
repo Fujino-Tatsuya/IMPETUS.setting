@@ -10,6 +10,15 @@ public class BoardManager : MonoBehaviour
     public static TestSpawner testSpawner;
     public bool IsInitialized => grid != null;
 
+    [Header("Node Prefab")]
+    [SerializeField] private GameObject nodePrefab;
+
+    [Header("Tile Materials")]
+    [Tooltip("흰색 계열 5개")]
+    [SerializeField] private Material[] whiteMats = new Material[5];
+
+    [Tooltip("회색 계열 5개")]
+    [SerializeField] private Material[] grayMats = new Material[5];
 
     private void Awake() // 씬넘겨도 유일성이 보존되는거지
         // 보드 매니저는 
@@ -26,7 +35,7 @@ public class BoardManager : MonoBehaviour
         GenerateBoard();
     }
 
-    public GameObject nodePrefab;
+
     public int width = 7;
     public int height = 7;
 
@@ -43,23 +52,46 @@ public class BoardManager : MonoBehaviour
 
     void GenerateBoard()
     {
-        grid = new Node[width, height]; //  
+        grid = new Node[Width, Height];
 
-        for (int x = 0; x < width; x++)
-        {
-            for (int z = 0; z < height; z++)
+        for (int y = 0; y < Height; y++)
+            for (int x = 0; x < Width; x++)
             {
-                GameObject obj = Instantiate(nodePrefab, new Vector3(x-3, 0, z-5), Quaternion.identity, transform);
-                Node node = obj.GetComponent<Node>();
+                var world = new Vector3(x - 3, 0, y - 5);
+                Node node = Instantiate(nodePrefab, world, Quaternion.identity, transform)
+                                .GetComponent<Node>();
 
-                // 예시: 교차 색상 배치
-                NodeColorType color = ((x + z) % 2 == 0) ? NodeColorType.White : NodeColorType.Gray;
-                node.Init(new Vector2Int(x, z), color);
+                bool isWhite = (x + y) % 2 == 0;
+                Material mat = isWhite
+                    ? whiteMats[Random.Range(0, whiteMats.Length)]
+                    : grayMats[Random.Range(0, grayMats.Length)];
 
-                grid[x, z] = node;
+                node.Init(new Vector2Int(x, y),
+                          isWhite ? NodeColorType.White : NodeColorType.Gray,
+                          mat);
+
+                grid[x, y] = node;
             }
-        }
     }
+    //void GenerateBoard()
+    //{
+    //    grid = new Node[width, height]; //  
+
+    //    for (int x = 0; x < width; x++)
+    //    {
+    //        for (int z = 0; z < height; z++)
+    //        {
+    //            GameObject obj = Instantiate(nodePrefab, new Vector3(x-3, 0, z-5), Quaternion.identity, transform);
+    //            Node node = obj.GetComponent<Node>();
+
+    //            // 예시: 교차 색상 배치
+    //            NodeColorType color = ((x + z) % 2 == 0) ? NodeColorType.White : NodeColorType.Gray;
+    //            node.Init(new Vector2Int(x, z), color);
+
+    //            grid[x, z] = node;
+    //        }
+    //    }
+    //}
 
     public Node GetNode(Vector2Int pos)
     {
