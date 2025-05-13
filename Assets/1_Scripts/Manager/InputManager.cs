@@ -237,6 +237,7 @@ public class InputManager : MonoBehaviour
         else
         {
             Destroy(piece.gameObject);
+            PieceManager.instance.SetCount(piece.pieceVariant, piece.level, PieceManager.instance.GetCount(piece.pieceVariant, piece.level) + 1);
         }
 
         /* 스냅 또는 원복 */
