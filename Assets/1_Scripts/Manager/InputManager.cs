@@ -109,6 +109,8 @@ public class InputManager : MonoBehaviour
     //    //Input.mousePosition
     //}
 
+    
+
     void Move()
     {
         if (piece == null) return;
