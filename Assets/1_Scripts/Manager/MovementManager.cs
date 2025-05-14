@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>보드 위 모든 기물의 이동 가능 영역을 계산·캐싱한다.</summary>
+/// 보드 위 모든 기물의 이동 가능 영역을 계산·캐싱한다.
 public class MovementManager : MonoBehaviour
 {
     public static MovementManager instance;
 
-    //   Piece → 이동 가능 노드 목록  (한 턴마다 갱신)
+    //   Piece 이동 가능 노드 목록  (한 턴마다 갱신)
     private readonly Dictionary<Piece, List<Node>> cache = new();
 
     void Awake()

@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
     public static InputManager instance;
+    public static EffectManager effect;
 
     private void Awake() // 씬넘겨도 유일성이 보존되는거지
                          // 보드 매니저는 
@@ -47,39 +47,67 @@ public class InputManager : MonoBehaviour
 
     void MouseRay()
     {
-
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit[] hits = Physics.RaycastAll(ray);
 
-        int x = -1, y = -1;
-
-        foreach (RaycastHit hit in hits)
+        foreach (var hit in hits)
         {
-            if(hit.collider.tag == "Piece")
+            if (hit.collider.CompareTag("Piece"))
             {
-                Piece piece = hit.collider.GetComponent<Piece>();
-                if (x != -1 && y != -1)
-                {
-                    if (piece.y > y)
-                        continue;
-                    if ((piece.x <= 3 && x > piece.x) || (piece.x >= 3 && x < piece.x))
-                        continue;
-                }
-                x = piece.x;
-                y = piece.y;
-                this.piece = piece;
+                Piece selected = hit.collider.GetComponent<Piece>();
+
+                // 같은 기물을 다시 클릭한 경우 → 무시
+                if (selected == piece)
+                    return;
+
+                piece = selected;
+
+                // 이동 노드 계산 후 이펙트 표시
+                var moves = MovementManager.instance.GetMoves(piece);
+                EffectManager.instance.ShowMoveEffects(moves);
+                return;
             }
         }
-        if (y == -1 && x == -1)
-        {
-            piece = null;
-            return;
-        }
 
-        Debug.Log(x.ToString() + ' ' +  y.ToString());
-        Debug.DrawRay(ray.origin, ray.direction, Color.red);
-        //Input.mousePosition
+        // 클릭한 대상이 기물이 아니면 선택 해제 + 이펙트 제거
+        piece = null;
+        EffectManager.instance.ClearEffects();
     }
+    //void MouseRay()
+    //{
+
+    //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //    RaycastHit[] hits = Physics.RaycastAll(ray);
+
+    //    int x = -1, y = -1;
+
+    //    foreach (RaycastHit hit in hits)
+    //    {
+    //        if(hit.collider.tag == "Piece")
+    //        {
+    //            Piece piece = hit.collider.GetComponent<Piece>();
+    //            if (x != -1 && y != -1)
+    //            {
+    //                if (piece.y > y)
+    //                    continue;
+    //                if ((piece.x <= 3 && x > piece.x) || (piece.x >= 3 && x < piece.x))
+    //                    continue;
+    //            }
+    //            x = piece.x;
+    //            y = piece.y;
+    //            this.piece = piece;
+    //        }
+    //    }
+    //    if (y == -1 && x == -1)
+    //    {
+    //        piece = null;
+    //        return;
+    //    }
+
+    //    Debug.Log(x.ToString() + ' ' +  y.ToString());
+    //    Debug.DrawRay(ray.origin, ray.direction, Color.red);
+    //    //Input.mousePosition
+    //}
 
     void Move()
     {
@@ -142,6 +170,8 @@ public class InputManager : MonoBehaviour
                 piece.x = lastNode.GridPos.x;
                 piece.y = lastNode.GridPos.y;
 
+
+                
                 MovementManager.instance.InvalidateAll();  
             }
         }
@@ -150,6 +180,7 @@ public class InputManager : MonoBehaviour
         piece.RePosition();
         piece = null;
 
+        EffectManager.instance.ClearEffects();
         Debug.Log($"last = ({x},{y})");
         Debug.DrawRay(ray.origin, ray.direction, Color.red);
     }
