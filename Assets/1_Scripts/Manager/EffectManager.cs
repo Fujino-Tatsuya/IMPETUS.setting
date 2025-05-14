@@ -28,6 +28,18 @@ public class EffectManager : MonoBehaviour
         }
     }
 
+    public void ShowPlaceEffects(List<Node> nodes)
+    {
+        ClearEffects();  // ±âÁ¸ ÀÌÆåÆ® Á¦°Å
+
+        foreach (var node in nodes)
+        {
+            GameObject effect = Instantiate(glowEffectPrefab);
+            effect.transform.position = node.transform.position + new Vector3(0, 0.1f, 0);  // »ìÂ¦ ¶ç¿ò
+            activeEffects.Add(effect);
+        }
+    }
+
     public void ClearEffects()
     {
         foreach (var effect in activeEffects)

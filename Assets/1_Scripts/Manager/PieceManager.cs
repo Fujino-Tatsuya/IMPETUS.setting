@@ -68,38 +68,44 @@ public class PieceManager : MonoBehaviour
             if (pieceVariant == PieceVariant.Phone)
                 upgradedPawnCount = count;
             if (pieceVariant == PieceVariant.Knight)
-                 upgradedKnightCount = count;
+                upgradedKnightCount = count;
             if (pieceVariant == PieceVariant.Bishop)
-                 upgradedBishopCount = count;
+                upgradedBishopCount = count;
             if (pieceVariant == PieceVariant.Rook)
-                 upgradedRookCount = count;
+                upgradedRookCount = count;
             if (pieceVariant == PieceVariant.Queen)
-                 upgradedQueenCount = count;
+                upgradedQueenCount = count;
         }
         else
         {
             if (pieceVariant == PieceVariant.Phone)
-                 pawnCount = count;
+                pawnCount = count;
             if (pieceVariant == PieceVariant.Knight)
-                 knightCount = count;
+                knightCount = count;
             if (pieceVariant == PieceVariant.Bishop)
                 bishopCount = count;
             if (pieceVariant == PieceVariant.Rook)
                 rookCount = count;
             if (pieceVariant == PieceVariant.Queen)
-                 queenCount = count;
+                queenCount = count;
+        }
+
+        var inventoryPieces = GameObject.Find("Canvas").GetComponentsInChildren<InventoryPiece>();
+        foreach (InventoryPiece inventoryPiece in inventoryPieces)
+        {
+            inventoryPiece.SpriteCheck();
         }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

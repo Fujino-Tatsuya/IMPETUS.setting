@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8553897423538542723}
   - component: {fileID: 3050728733515243998}
   m_Layer: 0
-  m_Name: Object_Pawn
+  m_Name: Object_Queen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e1c4d45ae958125458416f8dffcfc832, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 07ececab57bf1c149b14cb7d2dfe2da9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -159,4 +159,5 @@ MonoBehaviour:
   x: 0
   y: 0
   node: {fileID: 0}
+  level: 0
   moveRadius: 10

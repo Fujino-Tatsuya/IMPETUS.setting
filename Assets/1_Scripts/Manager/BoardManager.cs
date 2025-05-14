@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -24,9 +27,12 @@ public class BoardManager : MonoBehaviour
     [SerializeField] Material frontWhiteMat;
     [SerializeField] Material frontBlackMat;   // 회색 노드용
 
+    public List<Node> frontTwoRows = new List<Node>();
+
+
 
     private void Awake() // 씬넘겨도 유일성이 보존되는거지
-        // 보드 매니저는 
+                         // 보드 매니저는 
     {
         if (instance == null)
         {
@@ -38,6 +44,7 @@ public class BoardManager : MonoBehaviour
             Destroy(instance);
         }
         GenerateBoard();
+        Debug.Log("생성완료");
     }
 
 
@@ -51,6 +58,11 @@ public class BoardManager : MonoBehaviour
 
     void Start()
     {
+        foreach (var node in BoardManager.instance.frontTwoRows)
+        {
+            Debug.Log($"Front node at {node.GridPos}");
+        }
+
         //GenerateBoard();
         //testSpawner.SpawnRandomObstacle(3);
     }
@@ -58,6 +70,7 @@ public class BoardManager : MonoBehaviour
     void GenerateBoard()
     {
         grid = new Node[Width, Height];
+
 
         for (int y = 0; y < Height; y++)
             for (int x = 0; x < Width; x++)
@@ -81,7 +94,18 @@ public class BoardManager : MonoBehaviour
                           mat, frontmat);
 
                 grid[x, y] = node;
+                if (y < 2)
+                {
+                    frontTwoRows.Add(node);
+                }
+
             }
+
+    }
+
+    public List<Node> GetMoves()
+    {
+        return frontTwoRows;
     }
     //void GenerateBoard()
     //{
@@ -108,13 +132,13 @@ public class BoardManager : MonoBehaviour
         return grid[pos.x, pos.y];
     }
 
-//<<<<<<< HEAD
-//    public bool IsAble(int x, int z)
-//    {
-//        if (grid[x,z].piece)
-//            return false;
-//        return true;
-//=======
+    //<<<<<<< HEAD
+    //    public bool IsAble(int x, int z)
+    //    {
+    //        if (grid[x,z].piece)
+    //            return false;
+    //        return true;
+    //=======
     public bool IsBlocked(Vector2Int pos) // 이동 가능 여부 체크 
     {
         Node node = GetNode(pos);

@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
     public static InputManager instance;
     public static EffectManager effect;
+    public static BossPatternManager bosspattern;
 
     private void Awake() // 씬넘겨도 유일성이 보존되는거지
                          // 보드 매니저는 
@@ -27,12 +29,11 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
-            if(!isPlace)
-                MouseRay();
+            MouseRay();
         }
-        if(Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0))
         {
             PreView();
         }
@@ -50,6 +51,15 @@ public class InputManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit[] hits = Physics.RaycastAll(ray);
 
+        if (piece != null)
+        {
+
+            var moves = BoardManager.instance.GetMoves();
+            EffectManager.instance.ShowPlaceEffects(moves);
+
+
+            return;
+        }
         foreach (var hit in hits)
         {
             if (hit.collider.CompareTag("Piece"))
@@ -63,8 +73,17 @@ public class InputManager : MonoBehaviour
                 piece = selected;
 
                 // 이동 노드 계산 후 이펙트 표시
-                var moves = MovementManager.instance.GetMoves(piece);
-                EffectManager.instance.ShowMoveEffects(moves);
+                if (isPlace)
+                {
+                    var moves = BoardManager.instance.GetMoves();
+                    EffectManager.instance.ShowPlaceEffects(moves);
+
+                }
+                else
+                {
+                    var moves = MovementManager.instance.GetMoves(piece);
+                    EffectManager.instance.ShowMoveEffects(moves);
+                }
                 return;
             }
         }
@@ -108,8 +127,6 @@ public class InputManager : MonoBehaviour
     //    Debug.DrawRay(ray.origin, ray.direction, Color.red);
     //    //Input.mousePosition
     //}
-
-    
 
     void Move()
     {
@@ -173,15 +190,16 @@ public class InputManager : MonoBehaviour
                 piece.y = lastNode.GridPos.y;
 
 
-                
-                MovementManager.instance.InvalidateAll();  
+
             }
         }
+
 
         /* 스냅 또는 원복 */
         piece.RePosition();
         piece = null;
 
+        MovementManager.instance.InvalidateAll();
         EffectManager.instance.ClearEffects();
         Debug.Log($"last = ({x},{y})");
         Debug.DrawRay(ray.origin, ray.direction, Color.red);
@@ -211,7 +229,7 @@ public class InputManager : MonoBehaviour
     {
         if (piece == null) return;
 
-        isPlace = false;
+        //isPlace = false;
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit[] hits = Physics.RaycastAll(ray);
@@ -239,13 +257,10 @@ public class InputManager : MonoBehaviour
             if (BoardManager.instance.IsBlocked(node.GridPos))
             {
                 blocked = true;
-                x = node.GridPos.x;
-                y = node.GridPos.y;
-                continue; // 막혔으면 더 진행 안 함
             }
-
+            else
+                blocked = false;
             /* 빈 칸 발견 => 후보로 저장 (하지만 아직 piece 좌표는 건드리지 않음) */
-            blocked = false;
             x = node.GridPos.x;
             y = node.GridPos.y;
             lastNode = node;
@@ -256,28 +271,98 @@ public class InputManager : MonoBehaviour
         /* ---------------------------------------------------------------------- */
         if (lastNode != null && !blocked)
         {
-            /* 노드 링크 교체 */
-            if (piece.node != null)
-                piece.node.currentPiece = null;
+            List<Node> moves = BoardManager.instance.GetMoves();
+            if (moves.Contains(lastNode))          // 합법 이동
+            {
+                /* 노드 링크 교체 */
+                if (piece.node != null)
+                    piece.node.currentPiece = null;
 
-            lastNode.currentPiece = piece.gameObject;
-            piece.node = lastNode;
+                lastNode.currentPiece = piece.gameObject;
+                piece.node = lastNode;
 
-            /* 이때 좌표를 확정적으로 갱신 */
-            piece.x = lastNode.GridPos.x;
-            piece.y = lastNode.GridPos.y;
+                /* 이때 좌표를 확정적으로 갱신 */
+                piece.x = lastNode.GridPos.x;
+                piece.y = lastNode.GridPos.y;
+            }
+            else
+            {
+                PieceManager.instance.SetCount(piece.pieceVariant, piece.level, PieceManager.instance.GetCount(piece.pieceVariant, piece.level) + 1);
+                Destroy(piece.gameObject);
+            }
+        }
+        else if (lastNode != null && blocked)
+        {
+            Debug.Log("잘됨");
+            if (piece.node != lastNode)
+            {
+                List<Node> moves = BoardManager.instance.GetMoves();
+                if (moves.Contains(lastNode))          // 합법 이동
+                {
+                    if (piece.node == null)
+                    {
+                        Piece currentPieceScript = lastNode.currentPiece.GetComponent<Piece>();
+                        PieceManager.instance.SetCount(currentPieceScript.pieceVariant, currentPieceScript.level, PieceManager.instance.GetCount(currentPieceScript.pieceVariant, currentPieceScript.level) + 1);
+                        Destroy(currentPieceScript.gameObject);
+
+                        if (piece.node != null)
+                            piece.node.currentPiece = null;
+
+                        lastNode.currentPiece = piece.gameObject;
+                        piece.node = lastNode;
+
+                        /* 이때 좌표를 확정적으로 갱신 */
+                        piece.x = lastNode.GridPos.x;
+                        piece.y = lastNode.GridPos.y;
+                    }
+                    else
+                    {
+                        Piece currentPieceScript = lastNode.currentPiece.GetComponent<Piece>();
+                        var temp = piece.node.currentPiece;
+
+                        piece.node.currentPiece = currentPieceScript.gameObject;
+                        currentPieceScript.node = piece.node;
+
+                        currentPieceScript.x = piece.x;
+                        currentPieceScript.y = piece.y;
+                        currentPieceScript.RePosition();
+
+                        piece.node = lastNode;
+                        lastNode.currentPiece = piece.gameObject;
+
+                        /* 이때 좌표를 확정적으로 갱신 */
+
+
+                        piece.x = lastNode.GridPos.x;
+                        piece.y = lastNode.GridPos.y;
+                    }
+                }
+                else
+                {
+                    PieceManager.instance.SetCount(piece.pieceVariant, piece.level, PieceManager.instance.GetCount(piece.pieceVariant, piece.level) + 1);
+                    Destroy(piece.gameObject);
+                }
+            }
         }
         else
         {
-            Destroy(piece.gameObject);
             PieceManager.instance.SetCount(piece.pieceVariant, piece.level, PieceManager.instance.GetCount(piece.pieceVariant, piece.level) + 1);
+            Destroy(piece.gameObject);
         }
 
         /* 스냅 또는 원복 */
         piece.RePosition();
         piece = null;
 
+        MovementManager.instance.InvalidateAll();
+        EffectManager.instance.ClearEffects();
         Debug.Log($"last = ({x},{y})");
         Debug.DrawRay(ray.origin, ray.direction, Color.red);
+
+    }
+
+    void PlaceInput()
+    {
+
     }
 }

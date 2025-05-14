@@ -32,7 +32,7 @@ public class InventoryPiece : MonoBehaviour, IPointerDownHandler, IPointerClickH
         myImage = GetComponent<Image>();
         numberImage = numberObject.GetComponent<Image>();
         sprites = new Sprite[10];
-        for(int i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++)
         {
             sprites[i] = Resources.Load<Sprite>("TestImage/TestNumber/" + i.ToString());
 
@@ -43,7 +43,7 @@ public class InventoryPiece : MonoBehaviour, IPointerDownHandler, IPointerClickH
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -86,13 +86,14 @@ public class InventoryPiece : MonoBehaviour, IPointerDownHandler, IPointerClickH
         //InputManager.instance.isPlace = false;
         myImage.color = new Color(1, 1, 1, 1);
         PieceManager.instance.SetCount(pieceVariant, upgrade, PieceManager.instance.GetCount(pieceVariant, upgrade) - 1);
-        Invoke("SpriteCheck", 0.05f);
     }
 
-    void SpriteCheck()
+    public void SpriteCheck()
     {
         numberImage.sprite = sprites[PieceManager.instance.GetCount(pieceVariant, upgrade)];
-        if(PieceManager.instance.GetCount(pieceVariant, upgrade) == 0)
+        if (PieceManager.instance.GetCount(pieceVariant, upgrade) == 0)
             myImage.color = new Color(0f, 0f, 0f, 0.5f);
+        else
+            myImage.color = new Color(1, 1, 1, 1);
     }
 }
